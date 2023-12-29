@@ -1,0 +1,10 @@
+name: XtopiaChenghao
+version: '${project.version}'
+main: github.samyycx.xtopiachenghao.XtopiaChenghao
+softdepend:
+  - PlaceholderAPI
+
+commands:
+  chenghao:
+    aliases:
+      - ch
