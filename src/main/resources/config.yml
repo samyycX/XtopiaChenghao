@@ -1,0 +1,11 @@
+# 插件前缀
+Prefix: "&e[&aXtopia称号系统&e] &r"
+
+# 默认称号
+DefaultChenghao: ''
+
+# 刷新间隔 (秒)
+Interval: 10
+
+# 玩家称号仓库标题
+StorageTitle: '&6&l称号仓库'
