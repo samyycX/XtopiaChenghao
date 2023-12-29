@@ -1,6 +1,5 @@
 package github.samyycx.xtopiachenghao;
 
-import github.samyycx.xtopiachenghao.other.Pair;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
