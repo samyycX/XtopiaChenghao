@@ -1,5 +1,8 @@
-package github.samyycx.xtopiachenghao;
+package github.samyycx.xtopiachenghao.listener;
 
+import github.samyycx.xtopiachenghao.utils.TextUtils;
+import github.samyycx.xtopiachenghao.chenghao.ChenghaoManager;
+import github.samyycx.xtopiachenghao.utils.YamlUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -8,10 +11,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public class ChenghaoListener implements Listener {
 
@@ -25,9 +29,9 @@ public class ChenghaoListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
 
-        String chenghao = ChenghaoManager.getPlayerNowChenghao(e.getPlayer());
+        List<String> chenghao = ChenghaoManager.renderPlayerChenghao(e.getPlayer());
 
-        A.changePlayerName(e.getPlayer(), chenghao);
+        TextUtils.changePlayerName(e.getPlayer(), chenghao);
     }
 
     @EventHandler
@@ -56,15 +60,23 @@ public class ChenghaoListener implements Listener {
 
                 Player player = Bukkit.getPlayer(e.getWhoClicked().getUniqueId());
 
+                if (item.getType() == Material.REDSTONE_BLOCK) {
+                    ChenghaoManager.clearPlayerNowUsingChenghao(player);
+                    return;
+                }
+
                 if (!item.getItemMeta().hasLore()) {
                     return;
                 }
 
-                if (item.getItemMeta().getLore().get(0).startsWith(A.a("&e剩余时间"))) {
-                    ChenghaoManager.switchPlayerNowChenghao(player, e.getRawSlot());
-                } else if (item.getItemMeta().getLore().get(0).startsWith(A.a("&e绑定权限"))) {
-                    String perm = item.getItemMeta().getLore().get(0).replace(A.a("&e绑定权限: &c"), "");
-                    ChenghaoManager.switchPlayerNowPermChenghao(player, perm);
+                if (item.getItemMeta().getLore().get(0).startsWith(TextUtils.colorize("&e剩余时间"))) {
+                    ChenghaoManager.appendPlayerNowChenghao(player, e.getRawSlot());
+                } else if (item.getItemMeta().getLore().get(0).startsWith(TextUtils.colorize("&e绑定权限"))) {
+                    String perm = item.getItemMeta().getLore().get(0).replace(TextUtils.colorize("&e绑定权限: &c"), "");
+                    ChenghaoManager.appendPlayerNowPermChenghao(player, perm);
+                } else if (item.getItemMeta().getLore().get(0).startsWith(TextUtils.colorize("&e绑定Placeholder"))) {
+                    String placeholder = item.getItemMeta().getLore().get(0).replace(TextUtils.colorize("&e绑定Placeholder: &c"), "");
+                    ChenghaoManager.appendPlayerPlaceholderChenghao(player, placeholder);
                 }
 
             }

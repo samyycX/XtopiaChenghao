@@ -1,6 +1,5 @@
-package github.samyycx.xtopiachenghao.papi;
-import github.samyycx.xtopiachenghao.ChenghaoCache;
-import github.samyycx.xtopiachenghao.ChenghaoManager;
+package github.samyycx.xtopiachenghao.hook;
+import github.samyycx.xtopiachenghao.chenghao.ChenghaoManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +24,7 @@ public class ChenghaoExpansion extends PlaceholderExpansion {
     @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
         if (params.equalsIgnoreCase("name")) {
-            return ChenghaoManager.getPlayerNowChenghao(player.getPlayer());
+            return String.join(" ",ChenghaoManager.renderPlayerChenghao(player.getPlayer()));
         }
         return null;
     }

@@ -1,4 +1,4 @@
-package github.samyycx.xtopiachenghao;
+package github.samyycx.xtopiachenghao.chenghao;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,22 +9,26 @@ public class Chenghao {
     private int duration;
     private long timeOnCreated;
     private boolean isDefault;
+    private int priority;
 
     private Chenghao() {
     }
-    public Chenghao(String name, long timeOnCreated, int duration, boolean isDefault) {
+    public Chenghao(String name, long timeOnCreated, int duration, boolean isDefault, int priority) {
         this.name = name;
         this.timeOnCreated = timeOnCreated;
         this.duration = duration;
         this.isDefault = isDefault;
+        this.priority = priority;
     }
 
     public Map<String, String> toMap() {
+
         return new HashMap<String, String>() {{
             put("name", name);
             put("timeOnCreated", String.valueOf(timeOnCreated));
             put("duration", String.valueOf(duration));
             put("isDefault", String.valueOf(isDefault));
+            put("priority", String.valueOf(priority));
         }};
     }
 
@@ -33,7 +37,8 @@ public class Chenghao {
                 (String) map.get("name"),
                 Long.parseLong((String) map.get("timeOnCreated")),
                 Integer.parseInt((String) map.get("duration")),
-                Boolean.parseBoolean((String) map.get("isDefault"))
+                Boolean.parseBoolean((String) map.get("isDefault")),
+                Integer.parseInt((String) map.get("priority"))
         );
     }
 
@@ -67,5 +72,13 @@ public class Chenghao {
 
     public void setDefault(boolean aDefault) {
         isDefault = aDefault;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 }
