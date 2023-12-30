@@ -1,6 +1,12 @@
 package github.samyycx.xtopiachenghao;
 
-import github.samyycx.xtopiachenghao.papi.ChenghaoExpansion;
+import github.samyycx.xtopiachenghao.chenghao.ChenghaoCache;
+import github.samyycx.xtopiachenghao.chenghao.ChenghaoRunnable;
+import github.samyycx.xtopiachenghao.command.ChCommandExecutor;
+import github.samyycx.xtopiachenghao.listener.ChenghaoListener;
+import github.samyycx.xtopiachenghao.logger.ChenghaoLogger;
+import github.samyycx.xtopiachenghao.hook.ChenghaoExpansion;
+import github.samyycx.xtopiachenghao.utils.YamlUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -33,8 +39,8 @@ public final class XtopiaChenghao extends JavaPlugin {
     public static void reload() {
         ChenghaoLogger.init();
         ChenghaoCache.PERMISSION_CACHE.clear();
-        ChenghaoCache.CACHE.clear();
         YamlUtils.reloadDefault();
         YamlUtils.reloadPermData();
+        YamlUtils.reloadPapiData();
     }
 }

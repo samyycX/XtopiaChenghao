@@ -1,5 +1,7 @@
-package github.samyycx.xtopiachenghao;
+package github.samyycx.xtopiachenghao.utils;
 
+import github.samyycx.xtopiachenghao.XtopiaChenghao;
+import github.samyycx.xtopiachenghao.chenghao.*;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -11,7 +13,7 @@ import java.util.stream.Collectors;
 public class YamlUtils {
 
     public static String getDefaultChenghao() {
-        return A.a(XtopiaChenghao.INSTANCE.getConfig().getString("DefaultChenghao"));
+        return TextUtils.colorize(XtopiaChenghao.INSTANCE.getConfig().getString("DefaultChenghao"));
     }
 
     public static long getRefreshInterval() {
@@ -19,7 +21,7 @@ public class YamlUtils {
     }
 
     public static String getStorageTitle() {
-        return A.a(XtopiaChenghao.INSTANCE.getConfig().getString("StorageTitle"));
+        return TextUtils.colorize(XtopiaChenghao.INSTANCE.getConfig().getString("StorageTitle"));
     }
 
     public static YamlConfiguration getPlayerData(UUID uuid) {
@@ -64,9 +66,9 @@ public class YamlUtils {
     public static YamlConfiguration setDefaultForNew(File file) {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
-        config.set("NowUsing", 0);
+        config.set("NowUsing", Collections.singletonList(new ChenghaoIndex(0).toMap()));
         List<Map<?, ?>> chenghaos = config.getMapList("AllChenghaos");
-        Chenghao chenghao = new Chenghao(getDefaultChenghao(), 0, -1, true);
+        Chenghao chenghao = new Chenghao(getDefaultChenghao(), 0, -1, true, 0);
 
         chenghaos.add(chenghao.toMap());
 
@@ -84,16 +86,16 @@ public class YamlUtils {
 
         if (!defaultChenghao.equalsIgnoreCase("")) {
 
-            Chenghao chenghao = new Chenghao(defaultChenghao, 0, -1, true);
+            Chenghao chenghao = new Chenghao(defaultChenghao, 0, -1, true, 0);
 
             File dataFolder = new File(XtopiaChenghao.INSTANCE.getDataFolder(), "playerdata");
             for (File file : Objects.requireNonNull(dataFolder.listFiles())) {
                 YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
                 List<Map<?, ?>> chenghaos = config.getMapList("AllChenghaos");
-                if (chenghaos.size() == 0) {
+                if (chenghaos.isEmpty()) {
                     chenghaos.add(chenghao.toMap());
-                    config.set("NowUsing", 0);
+                    config.set("NowUsing", Collections.singletonList(new ChenghaoIndex(0).toMap()));
                 } else {
                     if (Boolean.parseBoolean((String)chenghaos.get(0).get("isDefault"))) {
                         chenghaos.set(0, chenghao.toMap());
@@ -150,6 +152,20 @@ public class YamlUtils {
 
         return YamlConfiguration.loadConfiguration(file);
     }
+    public static YamlConfiguration getPapiData() {
+        File file = new File(XtopiaChenghao.INSTANCE.getDataFolder(), "papidata.yml");
+
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return YamlConfiguration.loadConfiguration(file);
+    }
+
 
     public static void reloadPermData() {
         File file = new File(XtopiaChenghao.INSTANCE.getDataFolder(), "permdata.yml");
@@ -160,12 +176,32 @@ public class YamlUtils {
             if (config.get(permission) instanceof MemorySection) {
                 continue;
             }
-            ChenghaoCache.PERMISSION_CACHE.put(permission, A.a(config.getString(permission)));
+            PermissionChenghao pc = PermissionChenghao.fromStringList(config.getStringList(permission));
+            ChenghaoCache.PERMISSION_CACHE.put(permission, pc);
+        }
+    }
+
+    public static void reloadPapiData() {
+        File file = new File(XtopiaChenghao.INSTANCE.getDataFolder(), "papidata.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+
+        ChenghaoCache.PLACEHOLDER_CACHE.clear();
+        for (String placeholder : config.getKeys(false)) {
+            ChenghaoCache.PLACEHOLDER_CACHE.put(placeholder, PlaceholderChenghao.fromConfigurationSection(config.getConfigurationSection(placeholder)));
         }
     }
 
     public static void savePermData(YamlConfiguration config) {
         File file = new File(XtopiaChenghao.INSTANCE.getDataFolder(), "permdata.yml");
+        try {
+            config.save(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void savePapiData(YamlConfiguration config) {
+        File file = new File(XtopiaChenghao.INSTANCE.getDataFolder(), "papidata.yml");
         try {
             config.save(file);
         } catch (IOException e) {

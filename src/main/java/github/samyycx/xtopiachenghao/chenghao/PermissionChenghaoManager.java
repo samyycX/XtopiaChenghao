@@ -1,5 +1,8 @@
-package github.samyycx.xtopiachenghao;
+package github.samyycx.xtopiachenghao.chenghao;
 
+import github.samyycx.xtopiachenghao.utils.TextUtils;
+import github.samyycx.xtopiachenghao.utils.YamlUtils;
+import github.samyycx.xtopiachenghao.logger.ChenghaoLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -8,29 +11,14 @@ import java.util.UUID;
 
 public class PermissionChenghaoManager {
 
-    public static void addPermissionChenghao(CommandSender sender, String permission, String chenghao) {
+    public static void addPermissionChenghao(CommandSender sender, String permission, String chenghao, int priority) {
         YamlConfiguration config = YamlUtils.getPermData();
 
-        config.set(permission, chenghao);
+        PermissionChenghao pc = new PermissionChenghao(TextUtils.colorize(chenghao), priority);
 
-        String oldChenghao = ChenghaoCache.PERMISSION_CACHE.getOrDefault(permission, "");
-
-        ChenghaoCache.PERMISSION_CACHE.put(permission, A.a(chenghao));
-
-        if (!oldChenghao.equals("")) {
-            ChenghaoCache.CACHE.replaceAll((uuid, old) -> {
-                if (old.equals(oldChenghao)) {
-                    return A.a(chenghao);
-                } else {
-                    return old;
-                }
-            });
-        }
-
+        config.set(permission, pc.toStringList());
+        ChenghaoCache.PERMISSION_CACHE.put(permission, pc);
         YamlUtils.savePermData(config);
-
-
-
         ChenghaoLogger.success(sender, "设置成功!");
     }
 
@@ -52,10 +40,10 @@ public class PermissionChenghaoManager {
 
             if (playerData.getInt("NowUsing") == -2) {
                 if (permission.equals(playerData.getString("NowUsingPermission"))) {
-                    if (playerData.getMapList("AllChenghaos").size() > 0) {
-                        ChenghaoManager.switchPlayerNowChenghao(Bukkit.getPlayer(uuid), 0);
+                    if (!playerData.getMapList("AllChenghaos").isEmpty()) {
+                        ChenghaoManager.appendPlayerNowChenghao(Bukkit.getPlayer(uuid), 0);
                     } else {
-                        ChenghaoManager.switchPlayerNowChenghao(Bukkit.getPlayer(uuid), -1);
+                        ChenghaoManager.appendPlayerNowChenghao(Bukkit.getPlayer(uuid), -1);
                     }
                 }
             }
